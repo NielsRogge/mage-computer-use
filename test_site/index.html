@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cart (0) - Acme Shop</title>
+<style>
+  body { font-family: Helvetica, Arial, sans-serif; margin: 0; background: #f5f6f8; }
+  header { background: #202940; color: white; display: flex; align-items: center; gap: 24px; padding: 18px 32px; }
+  header h1 { font-size: 26px; margin: 0; }
+  #q { width: 520px; font-size: 20px; padding: 8px 12px; border-radius: 6px; border: 1px solid #999; }
+  button { font-size: 18px; padding: 9px 18px; border-radius: 6px; border: 0; cursor: pointer; }
+  #go { background: #4285f4; color: white; }
+  #cart { margin-left: auto; font-size: 20px; }
+  main { padding: 32px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 300px); gap: 28px; }
+  .card { background: white; border-radius: 10px; padding: 18px; box-shadow: 0 1px 3px #0002; }
+  .swatch { height: 150px; border-radius: 8px; margin-bottom: 12px; }
+  .card h3 { margin: 6px 0; font-size: 20px; }
+  .add { background: #34a853; color: white; margin-top: 10px; }
+  #msg { font-size: 22px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Acme Shop</h1>
+  <input id="q" placeholder="Search products...">
+  <button id="go">Search</button>
+  <div id="cart">Cart: 0 items</div>
+</header>
+<main>
+  <div id="msg">Popular products</div>
+  <div class="grid" id="grid"></div>
+</main>
+<script>
+const products = [
+  ["Blue running shoes", "#3b6fd8", 79], ["Red running shoes", "#d83b3b", 84], ["Green hiking boots", "#3b9d4a", 129],
+  ["Red rain jacket", "#b02a2a", 99], ["Black backpack", "#222", 59], ["White tennis shoes", "#ddd", 69],
+  ["Yellow raincoat", "#e8c32a", 89], ["Grey hoodie", "#888", 49],
+];
+let cart = [];
+function render(list) {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  for (const [name, color, price] of list) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `<div class="swatch" style="background:${color}"></div><h3>${name}</h3><div>$${price}</div><button class="add">Add to cart</button>`;
+    card.querySelector(".add").onclick = () => {
+      cart.push(name);
+      document.getElementById("cart").textContent = `Cart: ${cart.length} item${cart.length === 1 ? "" : "s"}`;
+      document.title = `Cart (${cart.length}) [${cart.join(", ")}] - Acme Shop`;
+    };
+    grid.appendChild(card);
+  }
+}
+function search() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const words = q.split(/\s+/).filter(Boolean);
+  const hits = products.filter(([name]) => words.every(w => name.toLowerCase().includes(w)));
+  document.getElementById("msg").textContent = `${hits.length} result${hits.length === 1 ? "" : "s"} for "${q}"`;
+  render(hits);
+}
+document.getElementById("go").onclick = search;
+document.getElementById("q").addEventListener("keydown", e => { if (e.key === "Enter") search(); });
+render([products[0], products[2], products[4], products[6], products[7], products[5]]);
+</script>
+</body>
+</html>
